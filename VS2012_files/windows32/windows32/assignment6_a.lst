@@ -1,0 +1,143 @@
+Microsoft (R) Macro Assembler Version 14.28.29335.0	    11/07/22 22:48:39
+assignment6_a.asm					     Page 1 - 1
+
+
+				;pennies for pay
+				;exponential pay
+
+				.586
+				.MODEL FLAT
+
+				INCLUDE io.h            ; header file for input/output
+			      C ; IO.H -- header file for I/O macros (listing suppressed)
+			      C .NOLIST      ; turn off listing
+			      C .LIST        ; begin listing
+			      C 
+
+				.STACK 4096
+
+ 00000000			.DATA
+ 00000000 00000000		caloriesburned DWORD ?
+ 00000004 00000004		cpm DWORD 4
+ 00000008 00000005		minutes DWORD 5
+
+
+ 0000000C 4D 69 6E 75 74	prompt0 BYTE "Minutes: ", 0
+	   65 73 3A 20 00
+ 00000016 59 6F 75 27 76	prompt1 BYTE "You've burned the following amount of calories:", 0
+	   65 20 62 75 72
+	   6E 65 64 20 74
+	   68 65 20 66 6F
+	   6C 6C 6F 77 69
+	   6E 67 20 61 6D
+	   6F 75 6E 74 20
+	   6F 66 20 63 61
+	   6C 6F 72 69 65
+	   73 3A 00
+
+ 00000046  0000000B [		caloriesburnedB     BYTE    11 DUP (?), 0
+	    00
+	   ] 00
+
+ 00000000			.CODE
+ 00000000			_MainProc2 PROC
+
+
+ 00000000  B8 00000000		        mov     eax, 0 ;intialize zero to eax
+ 00000005  B9 00000000		        mov     ecx, 0 ;intialize zero to ecx
+
+ 0000000A			        repeatLoop:
+ 0000000A  83 C1 05		                add     ecx, 5 ; iterate ecx by + 5 each loop cycle
+ 0000000D  8B C1		                mov     eax, ecx ; move iterator to eax to prepare multiplication
+ 0000000F  0F AF 05		                imul    eax, cpm ; multiply iterator inside eax by cpm (4)
+	   00000004 R
+				                dtoa     caloriesburnedB, eax  ; copy eax result into out variable
+				                 
+ 0000002E  83 F9 1E		                cmp   ecx, 30  ;compare ecx (the iterator) to 30 
+ 00000031  7F 1B		                jg endRepeatLoop          ; jump if not less than or equal to 
+
+				                output  prompt1, caloriesburnedB
+
+ 0000004C  EB BC		                jmp repeatLoop ; jump to the top of the loop
+ 0000004E			        endRepeatLoop: ; end loop section
+
+ 0000004E  B8 00000000		        mov     eax, 0  ; exit with return code 0
+ 00000053  C3			        ret
+ 00000054			_MainProc2 ENDP
+				END                             ; end of source code
+				INCLUDE io.h            ; header file for input/output
+
+				.STACK 4096
+
+				.DATA
+
+				nplus1 DWORD ?
+
+				sum BYTE 11 DUP (?),0
+				prompt1 BYTE "Summation", 0
+				string BYTE 40 DUP (?),0
+Microsoft (R) Macro Assembler Version 14.28.29335.0	    11/07/22 22:48:39
+assignment6_a.asm					     Symbols 2 - 1
+
+
+
+
+Macros:
+
+                N a m e                 Type
+
+atod . . . . . . . . . . . . . .	Proc
+atow . . . . . . . . . . . . . .	Proc
+dtoa . . . . . . . . . . . . . .	Proc
+input  . . . . . . . . . . . . .	Proc
+output . . . . . . . . . . . . .	Proc
+wtoa . . . . . . . . . . . . . .	Proc
+
+
+Segments and Groups:
+
+                N a m e                 Size     Length   Align   Combine Class
+
+FLAT . . . . . . . . . . . . . .	GROUP
+STACK  . . . . . . . . . . . . .	32 Bit	 00001000 Para	  Stack	  'STACK'	 
+_DATA  . . . . . . . . . . . . .	32 Bit	 00000052 Para	  Public  'DATA'	
+_TEXT  . . . . . . . . . . . . .	32 Bit	 00000054 Para	  Public  'CODE'	
+
+
+Procedures, parameters, and locals:
+
+                N a m e                 Type     Value    Attr
+
+_MainProc2 . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 00000054 Public
+  repeatLoop . . . . . . . . . .	L Near	 0000000A _TEXT	
+  endRepeatLoop  . . . . . . . .	L Near	 0000004E _TEXT	
+
+
+Symbols:
+
+                N a m e                 Type     Value    Attr
+
+@CodeSize  . . . . . . . . . . .	Number	 00000000h   
+@DataSize  . . . . . . . . . . .	Number	 00000000h   
+@Interface . . . . . . . . . . .	Number	 00000000h   
+@Model . . . . . . . . . . . . .	Number	 00000007h   
+@code  . . . . . . . . . . . . .	Text   	 _TEXT
+@data  . . . . . . . . . . . . .	Text   	 FLAT
+@fardata?  . . . . . . . . . . .	Text   	 FLAT
+@fardata . . . . . . . . . . . .	Text   	 FLAT
+@stack . . . . . . . . . . . . .	Text   	 FLAT
+_getInput  . . . . . . . . . . .	L Near	 00000000 FLAT	External
+_showOutput  . . . . . . . . . .	L Near	 00000000 FLAT	External
+atodproc . . . . . . . . . . . .	L Near	 00000000 FLAT	External
+atowproc . . . . . . . . . . . .	L Near	 00000000 FLAT	External
+caloriesburnedB  . . . . . . . .	Byte	 00000046 _DATA	
+caloriesburned . . . . . . . . .	DWord	 00000000 _DATA	
+cpm  . . . . . . . . . . . . . .	DWord	 00000004 _DATA	
+dtoaproc . . . . . . . . . . . .	L Near	 00000000 FLAT	External
+minutes  . . . . . . . . . . . .	DWord	 00000008 _DATA	
+prompt0  . . . . . . . . . . . .	Byte	 0000000C _DATA	
+prompt1  . . . . . . . . . . . .	Byte	 00000016 _DATA	
+wtoaproc . . . . . . . . . . . .	L Near	 00000000 FLAT	External
+
+	   0 Warnings
+	   0 Errors

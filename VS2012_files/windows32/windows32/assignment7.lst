@@ -1,0 +1,260 @@
+Microsoft (R) Macro Assembler Version 14.28.29335.0	    11/07/22 22:48:39
+assignment7.asm						     Page 1 - 1
+
+
+				.586
+				.MODEL FLAT
+
+				INCLUDE io.h
+			      C ; IO.H -- header file for I/O macros (listing suppressed)
+			      C .NOLIST      ; turn off listing
+			      C .LIST        ; begin listing
+			      C 
+
+				.STACK 4096
+
+ 00000000			.DATA
+ 00000000 00000000		num1 DWORD ?
+ 00000004 00000000		num2 DWORD ?
+ 00000008 45 6E 74 65 72	promptnum1		BYTE	"Enter number 1", 0
+	   20 6E 75 6D 62
+	   65 72 20 31 00
+ 00000017 45 6E 74 65 72	promptoperator	BYTE	"Enter a math operator", 0
+	   20 61 20 6D 61
+	   74 68 20 6F 70
+	   65 72 61 74 6F
+	   72 00
+ 0000002D 45 6E 74 65 72	promptnum2		BYTE	"Enter number 2", 0
+	   20 6E 75 6D 62
+	   65 72 20 32 00
+ 0000003C  00000028 [		string		BYTE	40 DUP (?)
+	    00
+	   ]
+ 00000064  00000001 [		stringmathoperator		BYTE	1 DUP (?)
+	    00
+	   ]
+ 00000065 54 68 65 20 72	outputLbl	BYTE	"The result is", 0
+	   65 73 75 6C 74
+	   20 69 73 00
+ 00000073  0000000B [		result	BYTE	11 DUP (?), 0
+	    00
+	   ] 00
+
+ 00000000			.CODE
+
+ 00000000			_MainProc PROC
+
+				; Ascii equivalents in decimal
+				; + 43
+				; - 45
+				; * 42
+				; / 47
+
+ 00000000				whileRunning:
+
+					input	promptnum1, string, 40	; prompt the user for the first number
+					atod	string	; convert to integer
+ 0000002D  A3 00000000 R		mov	num1, eax 
+
+					input	promptoperator, stringmathoperator, 40
+
+					input	promptnum2, string, 40	; pompt the user for the second number
+					atod	string	; convert to integer
+ 0000007D  A3 00000004 R		mov	num2, eax 	; store it in ecx
+
+ 00000082  83 3D 00000000 R		cmp num1, 101
+	   65
+ 00000089  0F 84 000000A7		je quit 
+
+ 0000008F  83 3D 00000004 R		cmp num2, 101
+	   65
+ 00000096  0F 84 0000009A		je quit 
+
+ 0000009C  80 3D 00000064 R		cmp stringmathoperator, 101
+	   65
+ 000000A3  0F 84 0000008D		je quit
+
+
+
+ 000000A9  FF 35 00000004 R		push num2 ; push number 2 first to the stack
+ 000000AF  FF 35 00000000 R		push num1 ; push number 1 secondly to the stack
+
+ 000000B5  80 3D 00000064 R		cmp stringmathoperator, 43 ; is multiplication?
+	   2B
+ 000000BC  74 02				je add_	
+ 000000BE  75 07				jne cont1
+ 000000C0					add_: 
+ 000000C0  E8 00000077					call addition
+ 000000C5  EB 36					jmp display
+
+ 000000C7					cont1:
+
+ 000000C7  80 3D 00000064 R		cmp stringmathoperator, 42 ; is addition?
+	   2A
+ 000000CE  74 02				je mult	
+ 000000D0  75 07				jne cont2
+ 000000D2					mult: 
+ 000000D2  E8 00000089					call multiply
+ 000000D7  EB 24					jmp display
+
+ 000000D9					cont2:
+
+ 000000D9  80 3D 00000064 R		cmp stringmathoperator, 45 ; is subtraction?
+	   2D
+ 000000E0  74 02				je sub_	
+ 000000E2  75 07				jne cont3
+ 000000E4					sub_: 
+ 000000E4  E8 0000005E					call subtract
+ 000000E9  EB 12					jmp display
+
+ 000000EB					cont3:
+
+ 000000EB  80 3D 00000064 R		cmp stringmathoperator, 47 ; is division?
+	   2F
+ 000000F2  74 02				je div_	
+ 000000F4  75 07				jne cont4
+ 000000F6					div_: 
+ 000000F6  E8 00000057					call divide
+ 000000FB  EB 00					jmp display
+
+ 000000FD					cont4:
+
+
+ 000000FD				display:
+ 000000FD  83 C4 08				add esp, 8      ; remove parametrs from stack
+							dtoa	result, eax 	; convert the RESULT to ASCII and store in "product"
+							output	outputLbl, result  ; output the RESULT
+ 00000131  E9 FFFFFECA				jmp whileRunning
+
+ 00000136				quit:
+ 00000136  B8 00000000				mov     eax, 0  ; exit with return code 0
+ 0000013B  C3			        ret
+
+
+ 0000013C			_MainProc ENDP
+
+
+ 0000013C			addition PROC ; addition procedure start
+ 0000013C  55				push   ebp            ; save EBP
+ 0000013D  8B EC				   mov    ebp,esp        ; establish stack frame
+ 0000013F  8B 45 08				   mov    eax,[ebp+8]    ; copy first parameter value
+ 00000142  03 45 0C				   add    eax,[ebp+12]   ; ADD second parameter value
+ 00000145  5D					   pop    ebp            ; restore EBP
+ 00000146  C3					   ret                   ; return
+ 00000147			addition ENDP
+
+
+ 00000147			subtract PROC ; substract procedure start
+ 00000147  55				push   ebp            ; save EBP
+ 00000148  8B EC				   mov    ebp,esp        ; establish stack frame
+ 0000014A  8B 45 08				   mov    eax,[ebp+8]    ; copy first parameter value
+ 0000014D  2B 45 0C				   sub    eax,[ebp+12]   ; SUB second parameter value
+ 00000150  5D					   pop    ebp            ; restore EBP
+ 00000151  C3					   ret                   ; return
+ 00000152			subtract ENDP
+
+
+
+
+ 00000152			divide PROC ; divide procedure start
+ 00000152  55				push   ebp            ; save EBP
+ 00000153  8B EC				   mov    ebp,esp        ; establish stack frame
+ 00000155  8B 45 08				   mov    eax,[ebp+8]    ; copy first parameter value
+ 00000158  8B 5D 0C				   mov    ebx,[ebp+12]   ; mov second parameter value
+ 0000015B  99					   cdq
+ 0000015C  F7 FB				   idiv		ebx
+ 0000015E  5D					   pop    ebp            ; restore EBP
+ 0000015F  C3					   ret                   ; return
+ 00000160			divide ENDP
+
+
+ 00000160			multiply PROC ;   multiply procedure start
+ 00000160  55				push   ebp            ; save EBP
+ 00000161  8B EC				   mov    ebp,esp        ; establish stack frame
+ 00000163  8B 45 08				   mov    eax,[ebp+8]    ; copy first parameter value
+ 00000166  0F AF 45 0C				   imul    eax,[ebp+12]   ; add second parameter value
+ 0000016A  5D					   pop    ebp            ; restore EBP
+ 0000016B  C3					   ret                   ; return
+ 0000016C			multiply ENDP
+				END
+Microsoft (R) Macro Assembler Version 14.28.29335.0	    11/07/22 22:48:39
+assignment7.asm						     Symbols 2 - 1
+
+
+
+
+Macros:
+
+                N a m e                 Type
+
+atod . . . . . . . . . . . . . .	Proc
+atow . . . . . . . . . . . . . .	Proc
+dtoa . . . . . . . . . . . . . .	Proc
+input  . . . . . . . . . . . . .	Proc
+output . . . . . . . . . . . . .	Proc
+wtoa . . . . . . . . . . . . . .	Proc
+
+
+Segments and Groups:
+
+                N a m e                 Size     Length   Align   Combine Class
+
+FLAT . . . . . . . . . . . . . .	GROUP
+STACK  . . . . . . . . . . . . .	32 Bit	 00001000 Para	  Stack	  'STACK'	 
+_DATA  . . . . . . . . . . . . .	32 Bit	 0000007F Para	  Public  'DATA'	
+_TEXT  . . . . . . . . . . . . .	32 Bit	 0000016C Para	  Public  'CODE'	
+
+
+Procedures, parameters, and locals:
+
+                N a m e                 Type     Value    Attr
+
+_MainProc  . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 0000013C Public
+  whileRunning . . . . . . . . .	L Near	 00000000 _TEXT	
+  add_ . . . . . . . . . . . . .	L Near	 000000C0 _TEXT	
+  cont1  . . . . . . . . . . . .	L Near	 000000C7 _TEXT	
+  mult . . . . . . . . . . . . .	L Near	 000000D2 _TEXT	
+  cont2  . . . . . . . . . . . .	L Near	 000000D9 _TEXT	
+  sub_ . . . . . . . . . . . . .	L Near	 000000E4 _TEXT	
+  cont3  . . . . . . . . . . . .	L Near	 000000EB _TEXT	
+  div_ . . . . . . . . . . . . .	L Near	 000000F6 _TEXT	
+  cont4  . . . . . . . . . . . .	L Near	 000000FD _TEXT	
+  display  . . . . . . . . . . .	L Near	 000000FD _TEXT	
+  quit . . . . . . . . . . . . .	L Near	 00000136 _TEXT	
+addition . . . . . . . . . . . .	P Near	 0000013C _TEXT	Length= 0000000B Public
+divide . . . . . . . . . . . . .	P Near	 00000152 _TEXT	Length= 0000000E Public
+multiply . . . . . . . . . . . .	P Near	 00000160 _TEXT	Length= 0000000C Public
+subtract . . . . . . . . . . . .	P Near	 00000147 _TEXT	Length= 0000000B Public
+
+
+Symbols:
+
+                N a m e                 Type     Value    Attr
+
+@CodeSize  . . . . . . . . . . .	Number	 00000000h   
+@DataSize  . . . . . . . . . . .	Number	 00000000h   
+@Interface . . . . . . . . . . .	Number	 00000000h   
+@Model . . . . . . . . . . . . .	Number	 00000007h   
+@code  . . . . . . . . . . . . .	Text   	 _TEXT
+@data  . . . . . . . . . . . . .	Text   	 FLAT
+@fardata?  . . . . . . . . . . .	Text   	 FLAT
+@fardata . . . . . . . . . . . .	Text   	 FLAT
+@stack . . . . . . . . . . . . .	Text   	 FLAT
+_getInput  . . . . . . . . . . .	L Near	 00000000 FLAT	External
+_showOutput  . . . . . . . . . .	L Near	 00000000 FLAT	External
+atodproc . . . . . . . . . . . .	L Near	 00000000 FLAT	External
+atowproc . . . . . . . . . . . .	L Near	 00000000 FLAT	External
+dtoaproc . . . . . . . . . . . .	L Near	 00000000 FLAT	External
+num1 . . . . . . . . . . . . . .	DWord	 00000000 _DATA	
+num2 . . . . . . . . . . . . . .	DWord	 00000004 _DATA	
+outputLbl  . . . . . . . . . . .	Byte	 00000065 _DATA	
+promptnum1 . . . . . . . . . . .	Byte	 00000008 _DATA	
+promptnum2 . . . . . . . . . . .	Byte	 0000002D _DATA	
+promptoperator . . . . . . . . .	Byte	 00000017 _DATA	
+result . . . . . . . . . . . . .	Byte	 00000073 _DATA	
+stringmathoperator . . . . . . .	Byte	 00000064 _DATA	
+string . . . . . . . . . . . . .	Byte	 0000003C _DATA	
+wtoaproc . . . . . . . . . . . .	L Near	 00000000 FLAT	External
+
+	   0 Warnings
+	   0 Errors

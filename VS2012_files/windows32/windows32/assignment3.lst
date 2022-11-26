@@ -1,0 +1,153 @@
+Microsoft (R) Macro Assembler Version 14.28.29335.0	    10/06/22 20:39:12
+assignment3.asm						     Page 1 - 1
+
+
+				; Assignment 3
+				; Colin Casey
+				; CISP 360 Al Juboori
+				; 10/1/2022
+
+
+				.586 ; Start of Source Code
+				.MODEL FLAT
+
+				INCLUDE io.h    ; header file for input/output
+			      C ; IO.H -- header file for I/O macros (listing suppressed)
+			      C .NOLIST      ; turn off listing
+			      C .LIST        ; begin listing
+			      C 
+
+				.STACK 4096
+
+ 00000000			.DATA 
+ 00000000 00000000		number1 DWORD   ?
+ 00000004 00000000		number2 DWORD   ?
+ 00000008 00000000		number3 DWORD   ?
+ 0000000C 00000000		number4 DWORD   ?
+ 00000010 45 6E 74 65 72	prompt1 BYTE    "Enter student name", 0
+	   20 73 74 75 64
+	   65 6E 74 20 6E
+	   61 6D 65 00
+ 00000023 45 6E 74 65 72	prompt2 BYTE    "Enter degree name", 0
+	   20 64 65 67 72
+	   65 65 20 6E 61
+	   6D 65 00
+ 00000035 45 6E 74 65 72	prompt3 BYTE    "Enter credits taken", 0
+	   20 63 72 65 64
+	   69 74 73 20 74
+	   61 6B 65 6E 00
+ 00000049 45 6E 74 65 72	prompt4 BYTE    "Enter credits needed", 0
+	   20 63 72 65 64
+	   69 74 73 20 6E
+	   65 65 64 65 64
+	   00
+ 0000005E  00000028 [		string  BYTE    40 DUP (?)
+	    00
+	   ]
+ 00000086 52 65 6D 61 69	resultLbl BYTE  "Remaining credits needed to graduate", 0
+	   6E 69 6E 67 20
+	   63 72 65 64 69
+	   74 73 20 6E 65
+	   65 64 65 64 20
+	   74 6F 20 67 72
+	   61 64 75 61 74
+	   65 00
+ 000000AB  0000000B [		sum     BYTE    11 DUP (?), 0
+	    00
+	   ] 00
+
+ 00000000			.CODE
+ 00000000			_MainProc PROC
+				        input   prompt1, string, 40      ; read ASCII characters, get StudentName
+				        atod    string          ; convert to integer
+ 0000002D  A3 00000000 R	        mov     number1, eax    ; store in memory
+
+				        input   prompt2, string, 40      ; repeat for second number, DegreeName
+				        atod    string
+ 0000005F  A3 00000004 R	        mov     number2, eax
+
+				        input   prompt3, string, 40      ; repeat for third number, CreditsTaken
+				        atod    string
+ 00000091  A3 00000008 R	        mov     number3, eax
+
+				        input   prompt4, string, 40      ; repeat for fourth number, TotalCreditsNeeded
+				        atod    string
+ 000000C3  A3 0000000C R	        mov     number4, eax
+				        
+ 000000C8  A1 0000000C R	        mov     eax, number4    ; first number to EAX
+ 000000CD  2B 05 00000008 R	        sub     eax, number3    ; add second number
+				        dtoa    sum, eax        ; convert to ASCII characters
+				        output  resultLbl, sum  ; output label and sum
+
+ 00000104  B8 00000000		        mov     eax, 0  ; exit with return code 0
+ 00000109  C3			        ret
+ 0000010A			_MainProc ENDP
+				END                             ; end of source code
+Microsoft (R) Macro Assembler Version 14.28.29335.0	    10/06/22 20:39:12
+assignment3.asm						     Symbols 2 - 1
+
+
+
+
+Macros:
+
+                N a m e                 Type
+
+atod . . . . . . . . . . . . . .	Proc
+atow . . . . . . . . . . . . . .	Proc
+dtoa . . . . . . . . . . . . . .	Proc
+input  . . . . . . . . . . . . .	Proc
+output . . . . . . . . . . . . .	Proc
+wtoa . . . . . . . . . . . . . .	Proc
+
+
+Segments and Groups:
+
+                N a m e                 Size     Length   Align   Combine Class
+
+FLAT . . . . . . . . . . . . . .	GROUP
+STACK  . . . . . . . . . . . . .	32 Bit	 00001000 Para	  Stack	  'STACK'	 
+_DATA  . . . . . . . . . . . . .	32 Bit	 000000B7 Para	  Public  'DATA'	
+_TEXT  . . . . . . . . . . . . .	32 Bit	 0000010A Para	  Public  'CODE'	
+
+
+Procedures, parameters, and locals:
+
+                N a m e                 Type     Value    Attr
+
+_MainProc  . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 0000010A Public
+
+
+Symbols:
+
+                N a m e                 Type     Value    Attr
+
+@CodeSize  . . . . . . . . . . .	Number	 00000000h   
+@DataSize  . . . . . . . . . . .	Number	 00000000h   
+@Interface . . . . . . . . . . .	Number	 00000000h   
+@Model . . . . . . . . . . . . .	Number	 00000007h   
+@code  . . . . . . . . . . . . .	Text   	 _TEXT
+@data  . . . . . . . . . . . . .	Text   	 FLAT
+@fardata?  . . . . . . . . . . .	Text   	 FLAT
+@fardata . . . . . . . . . . . .	Text   	 FLAT
+@stack . . . . . . . . . . . . .	Text   	 FLAT
+_getInput  . . . . . . . . . . .	L Near	 00000000 FLAT	External
+_showOutput  . . . . . . . . . .	L Near	 00000000 FLAT	External
+atodproc . . . . . . . . . . . .	L Near	 00000000 FLAT	External
+atowproc . . . . . . . . . . . .	L Near	 00000000 FLAT	External
+dtoaproc . . . . . . . . . . . .	L Near	 00000000 FLAT	External
+number1  . . . . . . . . . . . .	DWord	 00000000 _DATA	
+number2  . . . . . . . . . . . .	DWord	 00000004 _DATA	
+number3  . . . . . . . . . . . .	DWord	 00000008 _DATA	
+number4  . . . . . . . . . . . .	DWord	 0000000C _DATA	
+prompt1  . . . . . . . . . . . .	Byte	 00000010 _DATA	
+prompt2  . . . . . . . . . . . .	Byte	 00000023 _DATA	
+prompt3  . . . . . . . . . . . .	Byte	 00000035 _DATA	
+prompt4  . . . . . . . . . . . .	Byte	 00000049 _DATA	
+resultLbl  . . . . . . . . . . .	Byte	 00000086 _DATA	
+string . . . . . . . . . . . . .	Byte	 0000005E _DATA	
+sum  . . . . . . . . . . . . . .	Byte	 000000AB _DATA	
+wtoaproc . . . . . . . . . . . .	L Near	 00000000 FLAT	External
+
+	   0 Warnings
+	   0 Errors
