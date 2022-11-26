@@ -1,0 +1,143 @@
+Microsoft (R) Macro Assembler Version 14.28.29335.0	    10/06/22 21:55:35
+assignment4a.asm					     Page 1 - 1
+
+
+				; Assignment 4a
+				; Colin Casey
+				; CISP 360 Al Juboori
+				; 10/1/2022
+
+				.586
+				.MODEL FLAT
+
+				INCLUDE io.h
+			      C ; IO.H -- header file for I/O macros (listing suppressed)
+			      C .NOLIST      ; turn off listing
+			      C .LIST        ; begin listing
+			      C 
+
+				.STACK 4096
+
+ 00000000			.DATA
+ 00000000 00000000		capacity DWORD ?
+ 00000004 00000000		miles DWORD ?
+ 00000008 45 6E 74 65 72	prompt_miles BYTE "Enter the total miles driven in one tank", 0
+	   20 74 68 65 20
+	   74 6F 74 61 6C
+	   20 6D 69 6C 65
+	   73 20 64 72 69
+	   76 65 6E 20 69
+	   6E 20 6F 6E 65
+	   20 74 61 6E 6B
+	   00
+ 00000031 45 6E 74 65 72	prompt_capacity BYTE "Enter the capacity of your vehicle in gallons", 0
+	   20 74 68 65 20
+	   63 61 70 61 63
+	   69 74 79 20 6F
+	   66 20 79 6F 75
+	   72 20 76 65 68
+	   69 63 6C 65 20
+	   69 6E 20 67 61
+	   6C 6C 6F 6E 73
+	   00
+ 0000005F  00000028 [		string BYTE 40 DUP (?)
+	    00
+	   ]
+ 00000087 4D 69 6C 65 73	resultLbl BYTE "Miles per Gallon of vehicle", 0
+	   20 70 65 72 20
+	   47 61 6C 6C 6F
+	   6E 20 6F 66 20
+	   76 65 68 69 63
+	   6C 65 00
+ 000000A3  00000010 [		miles_per_gallon BYTE 16 DUP (?),0
+	    00
+	   ] 00
+
+ 00000000			.CODE
+ 00000000			_MainProc PROC
+				        input   prompt_capacity, string, 40                         ; read ASCII characters, get StudentName
+				        atod    string                                              ; convert to integer
+ 0000002D  A3 00000000 R	        mov     capacity, eax                                       ; store in memory
+
+				        input   prompt_miles, string, 40                            ; repeat for second number, DegreeName
+				        atod    string
+ 0000005F  A3 00000004 R	        mov     miles, eax
+
+ 00000064  A1 00000000 R	        mov     eax, capacity                                        ; move miles (variable) into EAX
+ 00000069  8B 1D 00000004 R	        mov     ebx, miles                                        ; move capacity into EBX 
+ 0000006F  99			        cdq                                                         ; convert double to quad 
+ 00000070  F7 F3		        div     ebx                                               ;miles divided BY capacity (gallons)
+				    
+				        dtoa miles_per_gallon, eax                                  ; convert to ASCII
+				        output resultLbl, miles_per_gallon                           ; out the resultLbl variable AND the miles per gallon
+
+ 000000A3  B8 00000000		        mov eax, 0                                                  ; make compiler happy 
+ 000000A8  C3			        ret 
+ 000000A9			_MainProc ENDP
+				END
+
+ 
+Microsoft (R) Macro Assembler Version 14.28.29335.0	    10/06/22 21:55:35
+assignment4a.asm					     Symbols 2 - 1
+
+
+
+
+Macros:
+
+                N a m e                 Type
+
+atod . . . . . . . . . . . . . .	Proc
+atow . . . . . . . . . . . . . .	Proc
+dtoa . . . . . . . . . . . . . .	Proc
+input  . . . . . . . . . . . . .	Proc
+output . . . . . . . . . . . . .	Proc
+wtoa . . . . . . . . . . . . . .	Proc
+
+
+Segments and Groups:
+
+                N a m e                 Size     Length   Align   Combine Class
+
+FLAT . . . . . . . . . . . . . .	GROUP
+STACK  . . . . . . . . . . . . .	32 Bit	 00001000 Para	  Stack	  'STACK'	 
+_DATA  . . . . . . . . . . . . .	32 Bit	 000000B4 Para	  Public  'DATA'	
+_TEXT  . . . . . . . . . . . . .	32 Bit	 000000A9 Para	  Public  'CODE'	
+
+
+Procedures, parameters, and locals:
+
+                N a m e                 Type     Value    Attr
+
+_MainProc  . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 000000A9 Public
+
+
+Symbols:
+
+                N a m e                 Type     Value    Attr
+
+@CodeSize  . . . . . . . . . . .	Number	 00000000h   
+@DataSize  . . . . . . . . . . .	Number	 00000000h   
+@Interface . . . . . . . . . . .	Number	 00000000h   
+@Model . . . . . . . . . . . . .	Number	 00000007h   
+@code  . . . . . . . . . . . . .	Text   	 _TEXT
+@data  . . . . . . . . . . . . .	Text   	 FLAT
+@fardata?  . . . . . . . . . . .	Text   	 FLAT
+@fardata . . . . . . . . . . . .	Text   	 FLAT
+@stack . . . . . . . . . . . . .	Text   	 FLAT
+_getInput  . . . . . . . . . . .	L Near	 00000000 FLAT	External
+_showOutput  . . . . . . . . . .	L Near	 00000000 FLAT	External
+atodproc . . . . . . . . . . . .	L Near	 00000000 FLAT	External
+atowproc . . . . . . . . . . . .	L Near	 00000000 FLAT	External
+capacity . . . . . . . . . . . .	DWord	 00000000 _DATA	
+dtoaproc . . . . . . . . . . . .	L Near	 00000000 FLAT	External
+miles_per_gallon . . . . . . . .	Byte	 000000A3 _DATA	
+miles  . . . . . . . . . . . . .	DWord	 00000004 _DATA	
+prompt_capacity  . . . . . . . .	Byte	 00000031 _DATA	
+prompt_miles . . . . . . . . . .	Byte	 00000008 _DATA	
+resultLbl  . . . . . . . . . . .	Byte	 00000087 _DATA	
+string . . . . . . . . . . . . .	Byte	 0000005F _DATA	
+wtoaproc . . . . . . . . . . . .	L Near	 00000000 FLAT	External
+
+	   0 Warnings
+	   0 Errors
